@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Dashboard</title>
+    <h1 id="scrambleTitle">Octiv Project Roadmap</h1>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="config.js"></script>
@@ -91,6 +91,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
+            cursor: pointer;
+            user-select: none;
         }
 
         .header p {
@@ -835,6 +837,72 @@
             existingError.remove();
         }
     }
+    function initTitleScramble() {
+        var titleElement = document.getElementById('scrambleTitle');
+        var originalText = titleElement.textContent;
+        var possible = "-+*/|}{[]~\\\":;?/.><=+-_)(*&^%$#@!)}";
+        var scrambleInterval;
+        var isHovering = false;
+
+        function scrambleText() {
+            if (!isHovering) return;
+
+            var scrambled = '';
+            for (var i = 0; i < originalText.length; i++) {
+                if (originalText[i] === ' ') {
+                    scrambled += ' '; // Keep spaces
+                } else {
+                    scrambled += possible.charAt(Math.floor(Math.random() * possible.length));
+                }
+            }
+            titleElement.textContent = scrambled;
+        }
+
+        function unscrambleText() {
+            var currentStep = 0;
+            var unscrambleInterval = setInterval(function() {
+                var result = '';
+
+                for (var i = 0; i < originalText.length; i++) {
+                    if (i < currentStep) {
+                        result += originalText[i];
+                    } else if (originalText[i] === ' ') {
+                        result += ' '; // Keep spaces
+                    } else {
+                        result += possible.charAt(Math.floor(Math.random() * possible.length));
+                    }
+                }
+
+                titleElement.textContent = result;
+                currentStep++;
+
+                if (currentStep > originalText.length) {
+                    clearInterval(unscrambleInterval);
+                    titleElement.textContent = originalText;
+                }
+            }, 50);
+        }
+
+        // Add hover events
+        titleElement.addEventListener('mouseenter', function() {
+            isHovering = true;
+            scrambleInterval = setInterval(scrambleText, 100);
+        });
+
+        titleElement.addEventListener('mouseleave', function() {
+            isHovering = false;
+            clearInterval(scrambleInterval);
+            unscrambleText();
+        });
+    }
+
+    // Add this to your existing DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing dashboard...');
+        initializeCharts();
+        loadSheetData();
+        initTitleScramble(); // Add this line
+    });
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
