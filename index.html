@@ -13,7 +13,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -409,16 +409,16 @@
                 grid-template-columns: 1fr;
                 padding: 10px;
             }
-            
+
             .header h1 {
                 font-size: 2rem;
             }
-            
+
             .task-details {
                 grid-template-columns: 1fr;
                 gap: 10px;
             }
-            
+
             .data-source {
                 flex-direction: column;
                 align-items: stretch;
@@ -427,362 +427,358 @@
     </style>
 </head>
 <body>
-    <div class="loading" id="loading">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Loading project data...</div>
+<div class="loading" id="loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading project data...</div>
+</div>
+
+<div class="dashboard" id="dashboard">
+    <div class="header">
+        <h1>Octiv Project Roadmapr</h1>
+        <p>Live data from secure source • Updates automatically</p>
     </div>
 
-    <div class="dashboard" id="dashboard">
-        <div class="header">
-            <h1>Project Command Center</h1>
-            <p>Live data from secure source • Updates automatically</p>
-            <button class="refresh-btn" onclick="refreshData()">
-                <span class="refresh-icon">⟳</span>
-                Refresh Data
-            </button>
-        </div>
-
-        <div class="data-source">
-            <div class="data-source-info">
-                <div class="status-indicator" id="connectionStatus"></div>
-                <div>
-                    <strong>Data Source:</strong> <span id="currentSheet">Secure Google Sheet</span><br>
-                    <small>Last updated: <span id="lastUpdate">Never</span></small>
-                </div>
-            </div>
-            <div class="sheet-input-group">
-                <button class="update-btn" onclick="refreshData()">🔄 Refresh Data</button>
-                <small style="color: #666;">Sheet URL is configured in code for security</small>
+    <div class="data-source">
+        <div class="data-source-info">
+            <div class="status-indicator" id="connectionStatus"></div>
+            <div>
+                <strong>Data Source:</strong> <span id="currentSheet">Secure Google Sheet</span><br>
+                <small>Last updated: <span id="lastUpdate">Never</span></small>
             </div>
         </div>
-
-        <div class="setup-instructions" id="setupInstructions">
-            <h3>🚀 Setup Instructions</h3>
-            <ol>
-                <li><strong>Create a Google Sheet</strong> with these exact column headers:
-                    <br><code>Task Name | Owner | Priority | Status | Start Date | End Date | Progress | Description</code>
-                </li>
-                <li><strong>Share your sheet:</strong> File → Share → Change to "Anyone with the link can view"</li>
-                <li><strong>Add your sheet ID to GitHub Secrets</strong></li>
-                <li><strong>Deploy using GitHub Actions</strong></li>
-            </ol>
-            <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
-                <strong>🔒 Security Benefits:</strong>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Sheet URL is hidden in environment variables</li>
-                    <li>Only authorized team members can edit the sheet</li>
-                    <li>Viewers see polished dashboard, not raw data</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalTasks">0</div>
-                <div class="stat-label">Total Tasks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="completedTasks">0</div>
-                <div class="stat-label">Completed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="inProgressTasks">0</div>
-                <div class="stat-label">In Progress</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="overallProgress">0%</div>
-                <div class="stat-label">Overall Progress</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="chart-title">Status Distribution</div>
-            <div class="chart-container">
-                <canvas id="statusChart"></canvas>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="chart-title">Progress Timeline</div>
-            <div class="chart-container">
-                <canvas id="progressChart"></canvas>
-            </div>
-        </div>
-
-        <div class="timeline-section card">
-            <div class="chart-title">Project Timeline</div>
-            <div class="timeline-container" id="timelineContainer">
-                <!-- Timeline items will be populated from Google Sheets -->
-            </div>
+        <div class="sheet-input-group">
+            <button class="update-btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <small style="color: #666;">Sheet URL is configured in code for security</small>
         </div>
     </div>
 
-    <script>
-        // Global variables
-        let projectData = [];
-        let statusChart, progressChart;
+    <div class="setup-instructions" id="setupInstructions">
+        <h3>🚀 Setup Instructions</h3>
+        <ol>
+            <li><strong>Create a Google Sheet</strong> with these exact column headers:
+                <br><code>Task Name | Owner | Priority | Status | Start Date | End Date | Progress | Description</code>
+            </li>
+            <li><strong>Share your sheet:</strong> File → Share → Change to "Anyone with the link can view"</li>
+            <li><strong>Add your sheet ID to GitHub Secrets</strong></li>
+            <li><strong>Deploy using GitHub Actions</strong></li>
+        </ol>
+        <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <strong>🔒 Security Benefits:</strong>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Sheet URL is hidden in environment variables</li>
+                <li>Only authorized team members can edit the sheet</li>
+                <li>Viewers see polished dashboard, not raw data</li>
+            </ul>
+        </div>
+    </div>
 
-        // Load sheet data using environment variables
-        async function loadSheetData() {
-            try {
-                showLoading();
-                
-                if (!window.CONFIG) {
-                    throw new Error('Configuration not loaded. Make sure config.js exists and GitHub Actions deployed properly.');
-                }
-                
-                const csvUrl = `${window.CONFIG.API_BASE}${window.CONFIG.SHEET_ID}/export?format=csv&gid=${window.CONFIG.SHEET_GID}`;
-                console.log('Fetching data from:', csvUrl);
-                
-                const response = await fetch(csvUrl);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch data: ${response.statusText}. Make sure the sheet is shared publicly.`);
-                }
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" id="totalTasks">0</div>
+            <div class="stat-label">Total Tasks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="completedTasks">0</div>
+            <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="inProgressTasks">0</div>
+            <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="overallProgress">0%</div>
+            <div class="stat-label">Overall Progress</div>
+        </div>
+    </div>
 
-                const csvText = await response.text();
-                console.log('CSV data received:', csvText.substring(0, 200) + '...');
-                
-                const parsed = Papa.parse(csvText, {
-                    header: true,
-                    skipEmptyLines: true,
-                    dynamicTyping: false
-                });
+    <div class="card">
+        <div class="chart-title">Status Distribution</div>
+        <div class="chart-container">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
 
-                if (parsed.errors.length > 0) {
-                    console.warn('CSV parsing warnings:', parsed.errors);
-                }
+    <div class="card">
+        <div class="chart-title">Progress Timeline</div>
+        <div class="chart-container">
+            <canvas id="progressChart"></canvas>
+        </div>
+    </div>
 
-                // Transform and validate data
-                projectData = parsed.data.map((row, index) => {
-                    return {
-                        id: index + 1,
-                        name: row['Task Name'] || `Task ${index + 1}`,
-                        owner: row['Owner'] || 'Unassigned',
-                        priority: (row['Priority'] || 'medium').toLowerCase(),
-                        status: (row['Status'] || 'not-started').toLowerCase().replace(/\s+/g, '-'),
-                        startDate: row['Start Date'] || new Date().toISOString().split('T')[0],
-                        endDate: row['End Date'] || new Date().toISOString().split('T')[0],
-                        progress: parseInt(row['Progress']) || 0,
-                        description: row['Description'] || ''
-                    };
-                }).filter(task => task.name && task.name !== '');
+    <div class="timeline-section card">
+        <div class="chart-title">Project Timeline</div>
+        <div class="timeline-container" id="timelineContainer">
+            <!-- Timeline items will be populated from Google Sheets -->
+        </div>
+    </div>
+</div>
 
-                console.log('Processed project data:', projectData);
+<script>
+    // Global variables
+    let projectData = [];
+    let statusChart, progressChart;
 
-                updateConnectionStatus(true);
-                updateLastUpdateTime();
-                updateDashboard();
-                hideSetupInstructions();
-                
-            } catch (error) {
-                console.error('Error loading data:', error);
-                updateConnectionStatus(false);
-                showError(error.message);
-            } finally {
-                hideLoading();
-            }
-        }
+    // Load sheet data using environment variables
+    async function loadSheetData() {
+        try {
+            showLoading();
 
-        function showLoading() {
-            const loading = document.getElementById('loading');
-            if (loading) {
-                loading.style.display = 'flex';
-            }
-        }
-
-        function hideLoading() {
-            const loading = document.getElementById('loading');
-            if (loading) {
-                loading.style.display = 'none';
-            }
-            document.getElementById('dashboard').classList.add('loaded');
-        }
-
-        function updateConnectionStatus(connected) {
-            const indicator = document.getElementById('connectionStatus');
-            if (indicator) {
-                indicator.className = connected ? 'status-indicator' : 'status-indicator error';
-            }
-        }
-
-        function updateLastUpdateTime() {
-            const lastUpdate = document.getElementById('lastUpdate');
-            if (lastUpdate) {
-                const now = new Date().toLocaleString();
-                lastUpdate.textContent = now;
-            }
-        }
-
-        function hideSetupInstructions() {
-            const instructions = document.getElementById('setupInstructions');
-            if (instructions) {
-                if (projectData.length > 0) {
-                    instructions.style.display = 'none';
-                } else {
-                    instructions.style.display = 'block';
-                }
-            }
-        }
-
-        function showError(message) {
-            const existingError = document.querySelector('.error-message');
-            if (existingError) {
-                existingError.remove();
+            if (!window.CONFIG) {
+                throw new Error('Configuration not loaded. Make sure config.js exists and GitHub Actions deployed properly.');
             }
 
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = message;
-            
-            const dashboard = document.getElementById('dashboard');
-            const header = dashboard.querySelector('.header');
-            header.insertAdjacentElement('afterend', errorDiv);
+            const csvUrl = `${window.CONFIG.API_BASE}${window.CONFIG.SHEET_ID}/export?format=csv&gid=${window.CONFIG.SHEET_GID}`;
+            console.log('Fetching data from:', csvUrl);
+
+            const response = await fetch(csvUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch data: ${response.statusText}. Make sure the sheet is shared publicly.`);
+            }
+
+            const csvText = await response.text();
+            console.log('CSV data received:', csvText.substring(0, 200) + '...');
+
+            const parsed = Papa.parse(csvText, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: false
+            });
+
+            if (parsed.errors.length > 0) {
+                console.warn('CSV parsing warnings:', parsed.errors);
+            }
+
+            // Transform and validate data
+            projectData = parsed.data.map((row, index) => {
+                return {
+                    id: index + 1,
+                    name: row['Task Name'] || `Task ${index + 1}`,
+                    owner: row['Owner'] || 'Unassigned',
+                    priority: (row['Priority'] || 'medium').toLowerCase(),
+                    status: (row['Status'] || 'not-started').toLowerCase().replace(/\s+/g, '-'),
+                    startDate: row['Start Date'] || new Date().toISOString().split('T')[0],
+                    endDate: row['End Date'] || new Date().toISOString().split('T')[0],
+                    progress: parseInt(row['Progress']) || 0,
+                    description: row['Description'] || ''
+                };
+            }).filter(task => task.name && task.name !== '');
+
+            console.log('Processed project data:', projectData);
+
+            updateConnectionStatus(true);
+            updateLastUpdateTime();
+            updateDashboard();
+            hideSetupInstructions();
+
+        } catch (error) {
+            console.error('Error loading data:', error);
+            updateConnectionStatus(false);
+            showError(error.message);
+        } finally {
+            hideLoading();
+        }
+    }
+
+    function showLoading() {
+        const loading = document.getElementById('loading');
+        if (loading) {
+            loading.style.display = 'flex';
+        }
+    }
+
+    function hideLoading() {
+        const loading = document.getElementById('loading');
+        if (loading) {
+            loading.style.display = 'none';
+        }
+        document.getElementById('dashboard').classList.add('loaded');
+    }
+
+    function updateConnectionStatus(connected) {
+        const indicator = document.getElementById('connectionStatus');
+        if (indicator) {
+            indicator.className = connected ? 'status-indicator' : 'status-indicator error';
+        }
+    }
+
+    function updateLastUpdateTime() {
+        const lastUpdate = document.getElementById('lastUpdate');
+        if (lastUpdate) {
+            const now = new Date().toLocaleString();
+            lastUpdate.textContent = now;
+        }
+    }
+
+    function hideSetupInstructions() {
+        const instructions = document.getElementById('setupInstructions');
+        if (instructions) {
+            if (projectData.length > 0) {
+                instructions.style.display = 'none';
+            } else {
+                instructions.style.display = 'block';
+            }
+        }
+    }
+
+    function showError(message) {
+        const existingError = document.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
         }
 
-        function refreshData() {
-            const refreshBtn = document.querySelector('.refresh-btn');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+
+        const dashboard = document.getElementById('dashboard');
+        const header = dashboard.querySelector('.header');
+        header.insertAdjacentElement('afterend', errorDiv);
+    }
+
+    function refreshData() {
+        const refreshBtn = document.querySelector('.refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.classList.add('spinning');
+        }
+
+        loadSheetData().finally(() => {
             if (refreshBtn) {
-                refreshBtn.classList.add('spinning');
+                refreshBtn.classList.remove('spinning');
             }
-            
-            loadSheetData().finally(() => {
-                if (refreshBtn) {
-                    refreshBtn.classList.remove('spinning');
-                }
-            });
-        }
+        });
+    }
 
-        function initializeCharts() {
-            // Status Distribution Pie Chart
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            
-            statusChart = new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'In Progress', 'Not Started', 'Blocked'],
-                    datasets: [{
-                        data: [0, 0, 0, 0],
-                        backgroundColor: [
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(245, 158, 11, 0.8)', 
-                            'rgba(107, 114, 128, 0.8)',
-                            'rgba(239, 68, 68, 0.8)'
-                        ],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true,
-                                font: {
-                                    size: 14,
-                                    weight: '600'
-                                }
-                            }
-                        }
-                    },
-                    cutout: '60%'
-                }
-            });
+    function initializeCharts() {
+        // Status Distribution Pie Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
 
-            // Progress Timeline Chart
-            const progressCtx = document.getElementById('progressChart').getContext('2d');
-            
-            progressChart = new Chart(progressCtx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Task Progress',
-                        data: [],
-                        borderColor: 'rgba(102, 126, 234, 1)',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        borderWidth: 4,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: 'rgba(102, 126, 234, 1)',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 3,
-                        pointRadius: 8,
-                        pointHoverRadius: 12
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(0,0,0,0.1)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
+        statusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completed', 'In Progress', 'Not Started', 'Blocked'],
+                datasets: [{
+                    data: [0, 0, 0, 0],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(107, 114, 128, 0.8)',
+                        'rgba(239, 68, 68, 0.8)'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 14,
+                                weight: '600'
                             }
                         }
                     }
-                }
-            });
-        }
-
-        function getStatusDistribution() {
-            const completed = projectData.filter(task => task.status === 'completed').length;
-            const inProgress = projectData.filter(task => task.status === 'in-progress').length;
-            const notStarted = projectData.filter(task => task.status === 'not-started').length;
-            const blocked = projectData.filter(task => task.status === 'blocked').length;
-            
-            return { completed, inProgress, notStarted, blocked };
-        }
-
-        function updateStats() {
-            const total = projectData.length;
-            const completed = projectData.filter(task => task.status === 'completed').length;
-            const inProgress = projectData.filter(task => task.status === 'in-progress').length;
-            const avgProgress = total > 0 ? Math.round(projectData.reduce((sum, task) => sum + task.progress, 0) / total) : 0;
-
-            document.getElementById('totalTasks').textContent = total;
-            document.getElementById('completedTasks').textContent = completed;
-            document.getElementById('inProgressTasks').textContent = inProgress;
-            document.getElementById('overallProgress').textContent = avgProgress + '%';
-        }
-
-        function renderTimeline() {
-            const container = document.getElementById('timelineContainer');
-            container.innerHTML = '';
-
-            if (projectData.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No tasks found. Please check your Google Sheet data.</p>';
-                return;
+                },
+                cutout: '60%'
             }
+        });
 
-            projectData.forEach(task => {
-                const item = document.createElement('div');
-                item.className = `timeline-item ${task.status}`;
-                
-                const daysRemaining = Math.ceil((new Date(task.endDate) - new Date()) / (1000 * 60 * 60 * 24));
-                const isOverdue = daysRemaining < 0 && task.status !== 'completed';
-                
-                item.innerHTML = `
+        // Progress Timeline Chart
+        const progressCtx = document.getElementById('progressChart').getContext('2d');
+
+        progressChart = new Chart(progressCtx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Progress',
+                    data: [],
+                    backgroundColor: function(context) {
+                        const value = context.parsed.y;
+                        if (value === 100) return 'rgba(16, 185, 129, 0.8)'; // Green for completed
+                        if (value >= 70) return 'rgba(34, 197, 94, 0.8)';     // Light green
+                        if (value >= 40) return 'rgba(245, 158, 11, 0.8)';    // Orange
+                        if (value > 0) return 'rgba(239, 68, 68, 0.8)';       // Red
+                        return 'rgba(156, 163, 175, 0.8)';                    // Gray
+                    },
+                    borderRadius: 8,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function getStatusDistribution() {
+        const completed = projectData.filter(task => task.status === 'completed').length;
+        const inProgress = projectData.filter(task => task.status === 'in-progress').length;
+        const notStarted = projectData.filter(task => task.status === 'not-started').length;
+        const blocked = projectData.filter(task => task.status === 'blocked').length;
+
+        return { completed, inProgress, notStarted, blocked };
+    }
+
+    function updateStats() {
+        const total = projectData.length;
+        const completed = projectData.filter(task => task.status === 'completed').length;
+        const inProgress = projectData.filter(task => task.status === 'in-progress').length;
+        const avgProgress = total > 0 ? Math.round(projectData.reduce((sum, task) => sum + task.progress, 0) / total) : 0;
+
+        document.getElementById('totalTasks').textContent = total;
+        document.getElementById('completedTasks').textContent = completed;
+        document.getElementById('inProgressTasks').textContent = inProgress;
+        document.getElementById('overallProgress').textContent = avgProgress + '%';
+    }
+
+    function renderTimeline() {
+        const container = document.getElementById('timelineContainer');
+        container.innerHTML = '';
+
+        if (projectData.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No tasks found. Please check your Google Sheet data.</p>';
+            return;
+        }
+
+        projectData.forEach(task => {
+            const item = document.createElement('div');
+            item.className = `timeline-item ${task.status}`;
+
+            const daysRemaining = Math.ceil((new Date(task.endDate) - new Date()) / (1000 * 60 * 60 * 24));
+            const isOverdue = daysRemaining < 0 && task.status !== 'completed';
+
+            item.innerHTML = `
                     <div class="timeline-header">
                         <div class="task-name">${task.name}</div>
                         <div class="task-status status-${task.status}">${task.status.replace('-', ' ')}</div>
@@ -807,48 +803,48 @@
                     ${task.description ? `<p style="margin-top: 10px; color: #666; font-size: 0.9rem;">${task.description}</p>` : ''}
                 `;
 
-                if (isOverdue) {
-                    item.style.borderLeftColor = '#ef4444';
-                }
-
-                container.appendChild(item);
-            });
-        }
-
-        function updateDashboard() {
-            updateStats();
-            renderTimeline();
-            
-            // Update charts
-            const statusData = getStatusDistribution();
-            if (statusChart) {
-                statusChart.data.datasets[0].data = [statusData.completed, statusData.inProgress, statusData.notStarted, statusData.blocked];
-                statusChart.update();
+            if (isOverdue) {
+                item.style.borderLeftColor = '#ef4444';
             }
 
-            // Update progress chart with task names and progress
-            if (progressChart) {
-                const taskNames = projectData.map(task => task.name.length > 15 ? task.name.substring(0, 15) + '...' : task.name);
-                const taskProgress = projectData.map(task => task.progress);
-                
-                progressChart.data.labels = taskNames;
-                progressChart.data.datasets[0].data = taskProgress;
-                progressChart.update();
-            }
-
-            // Remove any existing error messages
-            const existingError = document.querySelector('.error-message');
-            if (existingError) {
-                existingError.remove();
-            }
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing dashboard...');
-            initializeCharts();
-            loadSheetData();
+            container.appendChild(item);
         });
-    </script>
+    }
+
+    function updateDashboard() {
+        updateStats();
+        renderTimeline();
+
+        // Update charts
+        const statusData = getStatusDistribution();
+        if (statusChart) {
+            statusChart.data.datasets[0].data = [statusData.completed, statusData.inProgress, statusData.notStarted, statusData.blocked];
+            statusChart.update();
+        }
+
+        // Update progress chart with task names and progress
+        if (progressChart) {
+            const taskNames = projectData.map(task => task.name.length > 15 ? task.name.substring(0, 15) + '...' : task.name);
+            const taskProgress = projectData.map(task => task.progress);
+
+            progressChart.data.labels = taskNames;
+            progressChart.data.datasets[0].data = taskProgress;
+            progressChart.update();
+        }
+
+        // Remove any existing error messages
+        const existingError = document.querySelector('.error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded, initializing dashboard...');
+        initializeCharts();
+        loadSheetData();
+    });
+</script>
 </body>
 </html>
