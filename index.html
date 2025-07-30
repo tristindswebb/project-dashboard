@@ -8,7 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="config.js"></script>
     <style>
-        /* Same styles as before */
         * {
             margin: 0;
             padding: 0;
@@ -57,26 +56,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        .auth-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(102, 126, 234, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            backdrop-filter: blur(10px);
-        }
-
-        .auth-error {
-            color: #ef4444;
-            margin-top: 10px;
-            font-weight: 600;
-        }
-
         .dashboard {
             max-width: 1600px;
             margin: 0 auto;
@@ -91,14 +70,6 @@
 
         .dashboard.loaded {
             opacity: 1;
-        }
-
-        .dashboard.authenticated {
-            display: grid;
-        }
-
-        .dashboard.locked {
-            display: none;
         }
 
         .header {
@@ -190,18 +161,15 @@
             background: #ef4444;
         }
 
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         .sheet-input-group {
             display: flex;
             gap: 10px;
             align-items: center;
-        }
-
-        .sheet-input {
-            padding: 8px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 14px;
-            min-width: 300px;
         }
 
         .update-btn {
@@ -455,10 +423,6 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-            
-            .sheet-input {
-                min-width: 100%;
-            }
         }
     </style>
 </head>
@@ -467,7 +431,7 @@
         <div class="loading-spinner"></div>
         <div class="loading-text">Loading project data...</div>
     </div>
-    <!-- Same HTML structure but simpler -->
+
     <div class="dashboard" id="dashboard">
         <div class="header">
             <h1>Project Command Center</h1>
@@ -493,24 +457,19 @@
         </div>
 
         <div class="setup-instructions" id="setupInstructions">
-            <h3>🚀 Setup Instructions for Developers</h3>
+            <h3>🚀 Setup Instructions</h3>
             <ol>
                 <li><strong>Create a Google Sheet</strong> with these exact column headers:
                     <br><code>Task Name | Owner | Priority | Status | Start Date | End Date | Progress | Description</code>
                 </li>
                 <li><strong>Share your sheet:</strong> File → Share → Change to "Anyone with the link can view"</li>
-                <li><strong>Get the Sheet ID:</strong> Copy the ID from the URL: 
-                    <br><code>https://docs.google.com/spreadsheets/d/<strong>SHEET_ID_HERE</strong>/edit...</code>
-                </li>
-                <li><strong>Update the code:</strong> Replace <code>SHEET_ID</code> on line ~295 with your actual sheet ID</li>
-                <li><strong>Set permissions:</strong> Share the Google Sheet with specific team members only (for editing)</li>
-                <li><strong>Deploy:</strong> Upload to GitHub Pages and share dashboard URL + password with viewers</li>
+                <li><strong>Add your sheet ID to GitHub Secrets</strong></li>
+                <li><strong>Deploy using GitHub Actions</strong></li>
             </ol>
             <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
                 <strong>🔒 Security Benefits:</strong>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Sheet URL is hidden in source code</li>
-                    <li>Dashboard requires password access</li>
+                    <li>Sheet URL is hidden in environment variables</li>
                     <li>Only authorized team members can edit the sheet</li>
                     <li>Viewers see polished dashboard, not raw data</li>
                 </ul>
@@ -559,21 +518,30 @@
     </div>
 
     <script>
+        // Global variables
+        let projectData = [];
+        let statusChart, progressChart;
+
         // Load sheet data using environment variables
         async function loadSheetData() {
             try {
+                showLoading();
+                
                 if (!window.CONFIG) {
-                    throw new Error('Configuration not loaded');
+                    throw new Error('Configuration not loaded. Make sure config.js exists and GitHub Actions deployed properly.');
                 }
                 
                 const csvUrl = `${window.CONFIG.API_BASE}${window.CONFIG.SHEET_ID}/export?format=csv&gid=${window.CONFIG.SHEET_GID}`;
+                console.log('Fetching data from:', csvUrl);
                 
                 const response = await fetch(csvUrl);
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch data: ${response.statusText}`);
+                    throw new Error(`Failed to fetch data: ${response.statusText}. Make sure the sheet is shared publicly.`);
                 }
 
                 const csvText = await response.text();
+                console.log('CSV data received:', csvText.substring(0, 200) + '...');
+                
                 const parsed = Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
@@ -599,6 +567,8 @@
                     };
                 }).filter(task => task.name && task.name !== '');
 
+                console.log('Processed project data:', projectData);
+
                 updateConnectionStatus(true);
                 updateLastUpdateTime();
                 updateDashboard();
@@ -606,39 +576,55 @@
                 
             } catch (error) {
                 console.error('Error loading data:', error);
+                updateConnectionStatus(false);
+                showError(error.message);
+            } finally {
+                hideLoading();
             }
         }
 
         function showLoading() {
-            document.getElementById('loading').style.display = 'flex';
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.display = 'flex';
+            }
         }
 
         function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.display = 'none';
+            }
             document.getElementById('dashboard').classList.add('loaded');
         }
 
         function updateConnectionStatus(connected) {
             const indicator = document.getElementById('connectionStatus');
-            indicator.className = connected ? 'status-indicator' : 'status-indicator error';
+            if (indicator) {
+                indicator.className = connected ? 'status-indicator' : 'status-indicator error';
+            }
         }
 
         function updateLastUpdateTime() {
-            const now = new Date().toLocaleString();
-            document.getElementById('lastUpdate').textContent = now;
+            const lastUpdate = document.getElementById('lastUpdate');
+            if (lastUpdate) {
+                const now = new Date().toLocaleString();
+                lastUpdate.textContent = now;
+            }
         }
 
         function hideSetupInstructions() {
             const instructions = document.getElementById('setupInstructions');
-            if (projectData.length > 0) {
-                instructions.style.display = 'none';
-            } else {
-                instructions.style.display = 'block';
+            if (instructions) {
+                if (projectData.length > 0) {
+                    instructions.style.display = 'none';
+                } else {
+                    instructions.style.display = 'block';
+                }
             }
         }
 
         function showError(message) {
-            // Remove existing error messages
             const existingError = document.querySelector('.error-message');
             if (existingError) {
                 existingError.remove();
@@ -653,17 +639,16 @@
             header.insertAdjacentElement('afterend', errorDiv);
         }
 
-        function updateSheetUrl() {
-            // Sheet URL is now hardcoded for security
-            loadSheetData();
-        }
-
         function refreshData() {
             const refreshBtn = document.querySelector('.refresh-btn');
-            refreshBtn.classList.add('spinning');
+            if (refreshBtn) {
+                refreshBtn.classList.add('spinning');
+            }
             
             loadSheetData().finally(() => {
-                refreshBtn.classList.remove('spinning');
+                if (refreshBtn) {
+                    refreshBtn.classList.remove('spinning');
+                }
             });
         }
 
@@ -836,16 +821,20 @@
             
             // Update charts
             const statusData = getStatusDistribution();
-            statusChart.data.datasets[0].data = [statusData.completed, statusData.inProgress, statusData.notStarted, statusData.blocked];
-            statusChart.update();
+            if (statusChart) {
+                statusChart.data.datasets[0].data = [statusData.completed, statusData.inProgress, statusData.notStarted, statusData.blocked];
+                statusChart.update();
+            }
 
             // Update progress chart with task names and progress
-            const taskNames = projectData.map(task => task.name.length > 15 ? task.name.substring(0, 15) + '...' : task.name);
-            const taskProgress = projectData.map(task => task.progress);
-            
-            progressChart.data.labels = taskNames;
-            progressChart.data.datasets[0].data = taskProgress;
-            progressChart.update();
+            if (progressChart) {
+                const taskNames = projectData.map(task => task.name.length > 15 ? task.name.substring(0, 15) + '...' : task.name);
+                const taskProgress = projectData.map(task => task.progress);
+                
+                progressChart.data.labels = taskNames;
+                progressChart.data.datasets[0].data = taskProgress;
+                progressChart.update();
+            }
 
             // Remove any existing error messages
             const existingError = document.querySelector('.error-message');
@@ -853,8 +842,13 @@
                 existingError.remove();
             }
         }
-      
-    document.addEventListener('DOMContentLoaded', loadSheetData);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing dashboard...');
+            initializeCharts();
+            loadSheetData();
+        });
     </script>
 </body>
 </html>
