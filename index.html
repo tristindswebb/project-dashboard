@@ -895,20 +895,13 @@
             unscrambleText();
         });
     }
-
-    // Add this to your existing DOMContentLoaded
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, initializing dashboard...');
-        initializeCharts();
-        loadSheetData();
-        initTitleScramble(); // Add this line
-    });
-
+    
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM loaded, initializing dashboard...');
         initializeCharts();
         loadSheetData();
+        initTitleScramble();
     });
 </script>
 </body>
