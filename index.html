@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <h1 id="scrambleTitle">Octiv Project Roadmap</h1>
+    <title>Octiv Project Roadmap</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="config.js"></script>
@@ -87,12 +87,20 @@
         .header h1 {
             font-size: 3rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #1cd926, #1d8a23);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
             cursor: pointer;
             user-select: none;
+            color: rgba(9, 129, 4, 0.7);
+            border-bottom: 3px solid rgba(10, 147, 2, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .header h1 span {
+            transition: color 0.2s ease;
+        }
+
+        .header h1 span:hover {
+            color: #ff6b6b;
         }
 
         .header p {
@@ -436,7 +444,7 @@
 
 <div class="dashboard" id="dashboard">
     <div class="header">
-        <h1>Octiv Project Roadmap</h1>
+        <h1 id="scrambleTitle">Octiv Project Roadmap</h1>
         <p>Live Data - Dont Panic!</p>
     </div>
 
@@ -841,61 +849,71 @@
         var titleElement = document.getElementById('scrambleTitle');
         var originalText = titleElement.textContent;
         var possible = "-+*/|}{[]~\\\":;?/.><=+-_)(*&^%$#@!)}";
-        var scrambleInterval;
-        var isHovering = false;
+        var colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43'];
 
-        function scrambleText() {
-            if (!isHovering) return;
 
-            var scrambled = '';
-            for (var i = 0; i < originalText.length; i++) {
-                if (originalText[i] === ' ') {
-                    scrambled += ' '; // Keep spaces
-                } else {
-                    scrambled += possible.charAt(Math.floor(Math.random() * possible.length));
-                }
-            }
-            titleElement.textContent = scrambled;
+        // Break title into individual letter spans
+        titleElement.innerHTML = '';
+        var letterSpans = [];
+
+        for (var i = 0; i < originalText.length; i++) {
+            var span = document.createElement('span');
+            span.textContent = originalText[i];
+            span.style.display = 'inline-block';
+            span.style.minWidth = originalText[i] === ' ' ? '0.3em' : 'auto'; // Preserve space width
+            letterSpans.push({
+                element: span,
+                originalLetter: originalText[i],
+                scrambleInterval: null
+            });
+            titleElement.appendChild(span);
         }
 
-        function unscrambleText() {
-            var currentStep = 0;
-            var unscrambleInterval = setInterval(function() {
-                var result = '';
+        function scrambleLetter(letterObj) {
+            if (letterObj.originalLetter === ' ') return; // Don't scramble spaces
 
-                for (var i = 0; i < originalText.length; i++) {
-                    if (i < currentStep) {
-                        result += originalText[i];
-                    } else if (originalText[i] === ' ') {
-                        result += ' '; // Keep spaces
+            letterObj.scrambleInterval = setInterval(function() {
+                letterObj.element.textContent = possible.charAt(Math.floor(Math.random() * possible.length));
+                letterObj.element.style.color = colors[Math.floor(Math.random() * colors.length)];
+            }, 100);
+        }
+
+        function unscrambleLetter(letterObj, delay) {
+            setTimeout(function() {
+                if (letterObj.scrambleInterval) {
+                    clearInterval(letterObj.scrambleInterval);
+                }
+
+                var steps = 3;
+                var currentStep = 0;
+
+                var unscrambleInterval = setInterval(function() {
+                    if (currentStep < steps && letterObj.originalLetter !== ' ') {
+                        letterObj.element.textContent = possible.charAt(Math.floor(Math.random() * possible.length));
+                        letterObj.element.style.color = colors[Math.floor(Math.random() * colors.length)];
                     } else {
-                        result += possible.charAt(Math.floor(Math.random() * possible.length));
+                        letterObj.element.textContent = letterObj.originalLetter;
+                        letterObj.element.style.color = ''; // Reset to original color
+                        clearInterval(unscrambleInterval);
                     }
-                }
-
-                titleElement.textContent = result;
-                currentStep++;
-
-                if (currentStep > originalText.length) {
-                    clearInterval(unscrambleInterval);
-                    titleElement.textContent = originalText;
-                }
-            }, 50);
+                    currentStep++;
+                }, 80);
+            }, delay);
         }
 
-        // Add hover events
-        titleElement.addEventListener('mouseenter', function() {
-            isHovering = true;
-            scrambleInterval = setInterval(scrambleText, 100);
+        // Add hover events to each letter
+        letterSpans.forEach(function(letterObj, index) {
+            letterObj.element.addEventListener('mouseenter', function() {
+                scrambleLetter(letterObj);
+            });
+
+            letterObj.element.addEventListener('mouseleave', function() {
+                unscrambleLetter(letterObj, 0);
+            });
         });
 
-        titleElement.addEventListener('mouseleave', function() {
-            isHovering = false;
-            clearInterval(scrambleInterval);
-            unscrambleText();
-        });
     }
-    
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM loaded, initializing dashboard...');
