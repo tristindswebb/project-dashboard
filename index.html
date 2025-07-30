@@ -836,7 +836,17 @@
 
         // Update progress chart with task names and progress
         if (progressChart) {
-            const taskNames = projectData.map(task => task.name.length > 15 ? task.name.substring(0, 15) + '...' : task.name);
+            const taskNames = projectData.map(task => {
+                const words = task.name.split(' ');
+                if (words.length <= 2) return task.name; // Short names stay as-is
+
+                // For longer names, split into 2 lines at a logical break point
+                const mid = Math.ceil(words.length / 2);
+                const firstLine = words.slice(0, mid).join(' ');
+                const secondLine = words.slice(mid).join(' ');
+
+                return [firstLine, secondLine]; // Chart.js automatically handles arrays as multi-line
+            });
             const taskProgress = projectData.map(task => task.progress);
 
             progressChart.data.labels = taskNames;
