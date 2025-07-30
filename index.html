@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #23a62a 0%, #118217 100%);
             min-height: 100vh;
             color: #333;
         }
@@ -27,7 +27,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(102, 126, 234, 0.9);
+            background: rgba(10, 128, 16, 0.9);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -87,7 +87,7 @@
         .header h1 {
             font-size: 3rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1cd926, #1d8a23);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
@@ -173,7 +173,7 @@
         }
 
         .update-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             border: none;
             padding: 8px 16px;
@@ -206,7 +206,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #10b981, #059669);
         }
 
         .stats-grid {
@@ -237,7 +237,7 @@
             font-size: 3rem;
             font-weight: 800;
             margin-bottom: 5px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #10b981, #059669);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -358,7 +358,7 @@
         .progress-fill {
             height: 100%;
             border-radius: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #10b981, #059669);
             transition: width 0.5s ease;
             position: relative;
         }
@@ -434,12 +434,8 @@
 
 <div class="dashboard" id="dashboard">
     <div class="header">
-        <h1>Octiv Project Roadmapr</h1>
+        <h1>Octiv Project Roadmap</h1>
         <p>Live data from secure source • Updates automatically</p>
-        <button class="refresh-btn" onclick="refreshData()">
-            <span class="refresh-icon">⟳</span>
-            Refresh Data
-        </button>
     </div>
 
     <div class="data-source">
@@ -453,26 +449,6 @@
         <div class="sheet-input-group">
             <button class="update-btn" onclick="refreshData()">🔄 Refresh Data</button>
             <small style="color: #666;">Sheet URL is configured in code for security</small>
-        </div>
-    </div>
-
-    <div class="setup-instructions" id="setupInstructions">
-        <h3>🚀 Setup Instructions</h3>
-        <ol>
-            <li><strong>Create a Google Sheet</strong> with these exact column headers:
-                <br><code>Task Name | Owner | Priority | Status | Start Date | End Date | Progress | Description</code>
-            </li>
-            <li><strong>Share your sheet:</strong> File → Share → Change to "Anyone with the link can view"</li>
-            <li><strong>Add your sheet ID to GitHub Secrets</strong></li>
-            <li><strong>Deploy using GitHub Actions</strong></li>
-        </ol>
-        <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
-            <strong>🔒 Security Benefits:</strong>
-            <ul style="margin-left: 20px; margin-top: 10px;">
-                <li>Sheet URL is hidden in environment variables</li>
-                <li>Only authorized team members can edit the sheet</li>
-                <li>Viewers see polished dashboard, not raw data</li>
-            </ul>
         </div>
     </div>
 
