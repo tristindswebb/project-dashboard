@@ -15,10 +15,10 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: rgba(0, 255, 15, 0.31);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
             min-height: 100vh;
-            color: #333;
+            color: #ffffff;
         }
 
         .loading {
@@ -27,7 +27,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(10, 128, 16, 0.9);
+            background: rgba(26, 26, 26, 0.95);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -38,14 +38,14 @@
         .loading-spinner {
             width: 60px;
             height: 60px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top: 4px solid white;
+            border: 4px solid rgba(74, 222, 128, 0.3);
+            border-top: 4px solid #4ade80;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         .loading-text {
-            color: white;
+            color: #4ade80;
             font-size: 1.2rem;
             margin-left: 20px;
             font-weight: 600;
@@ -74,13 +74,11 @@
 
         .header {
             grid-column: 1 / -1;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
+            background: #2a2a2a;
+            border-radius: 12px;
             padding: 30px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid #404040;
             position: relative;
         }
 
@@ -90,9 +88,10 @@
             margin-bottom: 10px;
             cursor: pointer;
             user-select: none;
-            color: rgba(9, 129, 4, 0.7);
-            border-bottom: 3px solid rgba(10, 147, 2, 0.3);
+            color: #ffffff;
+            border-bottom: 3px solid #4ade80;
             padding-bottom: 8px;
+            display: inline-block;
         }
 
         .header h1 span {
@@ -100,12 +99,12 @@
         }
 
         .header h1 span:hover {
-            color: #ff6b6b;
+            color: #4ade80;
         }
 
         .header p {
             font-size: 1.2rem;
-            color: #666;
+            color: #a1a1aa;
             opacity: 0.8;
         }
 
@@ -113,8 +112,8 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
+            background: #4ade80;
+            color: #000000;
             border: none;
             padding: 12px 20px;
             border-radius: 8px;
@@ -127,8 +126,8 @@
         }
 
         .refresh-btn:hover {
+            background: #22c55e;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
         }
 
         .refresh-btn.spinning {
@@ -141,11 +140,10 @@
 
         .data-source {
             grid-column: 1 / -1;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
+            background: #2a2a2a;
+            border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #404040;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -157,13 +155,14 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            color: #ffffff;
         }
 
         .status-indicator {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #10b981;
+            background: #4ade80;
             animation: pulse 2s infinite;
         }
 
@@ -183,8 +182,8 @@
         }
 
         .update-btn {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
+            background: #4ade80;
+            color: #000000;
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
@@ -192,69 +191,58 @@
             font-weight: 600;
         }
 
+        .update-btn:hover {
+            background: #22c55e;
+        }
+
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
+            background: #2a2a2a;
+            border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid #404040;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #10b981, #059669);
+            transform: translateY(-2px);
+            border-color: #4ade80;
         }
 
         .stats-grid {
             grid-column: 1 / -1;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
+            background: #2a2a2a;
+            border-radius: 12px;
             padding: 25px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid #404040;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
         .stat-card:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
+            border-color: #4ade80;
         }
 
         .stat-number {
             font-size: 3rem;
             font-weight: 800;
             margin-bottom: 5px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #4ade80;
         }
 
         .stat-label {
             font-size: 1rem;
-            color: #666;
+            color: #a1a1aa;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
@@ -269,7 +257,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 20px;
-            color: #333;
+            color: #ffffff;
             text-align: center;
         }
 
@@ -285,7 +273,7 @@
         }
 
         .timeline-item {
-            background: rgba(255, 255, 255, 0.9);
+            background: #333333;
             border-radius: 12px;
             padding: 20px;
             border-left: 5px solid;
@@ -295,14 +283,17 @@
         }
 
         .timeline-item:hover {
-            transform: translateX(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+            background: #3a3a3a;
         }
 
-        .timeline-item.completed { border-left-color: #10b981; }
-        .timeline-item.in-progress { border-left-color: #f59e0b; }
-        .timeline-item.not-started { border-left-color: #6b7280; }
-        .timeline-item.blocked { border-left-color: #ef4444; }
+        .timeline-item.planned { border-left-color: #a855f7; }
+        .timeline-item.in-progress { border-left-color: #3b82f6; }
+        .timeline-item.in-review { border-left-color: #f59e0b; }
+        .timeline-item.uat { border-left-color: #8b5cf6; }
+        .timeline-item.deploy-ready { border-left-color: #06b6d4; }
+        .timeline-item.deployed { border-left-color: #10b981; }
+        .timeline-item.on-hold { border-left-color: #6b7280; }
 
         .timeline-header {
             display: flex;
@@ -314,7 +305,7 @@
         .task-name {
             font-size: 1.2rem;
             font-weight: 700;
-            color: #333;
+            color: #ffffff;
         }
 
         .task-status {
@@ -326,10 +317,13 @@
             letter-spacing: 0.5px;
         }
 
-        .status-completed { background: #d1fae5; color: #065f46; }
-        .status-in-progress { background: #fef3c7; color: #92400e; }
-        .status-not-started { background: #f3f4f6; color: #374151; }
-        .status-blocked { background: #fee2e2; color: #991b1b; }
+        .status-planned { background: #a855f7; color: #ffffff; }
+        .status-in-progress { background: #3b82f6; color: #ffffff; }
+        .status-in-review { background: #f59e0b; color: #000000; }
+        .status-uat { background: #8b5cf6; color: #ffffff; }
+        .status-deploy-ready { background: #06b6d4; color: #ffffff; }
+        .status-deployed { background: #10b981; color: #ffffff; }
+        .status-on-hold { background: #6b7280; color: #ffffff; }
 
         .task-details {
             display: grid;
@@ -344,7 +338,7 @@
 
         .detail-label {
             font-size: 0.8rem;
-            color: #666;
+            color: #a1a1aa;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 5px;
@@ -353,13 +347,13 @@
         .detail-value {
             font-size: 1rem;
             font-weight: 600;
-            color: #333;
+            color: #ffffff;
         }
 
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: #e5e7eb;
+            background: #404040;
             border-radius: 4px;
             overflow: hidden;
             margin-top: 10px;
@@ -368,32 +362,32 @@
         .progress-fill {
             height: 100%;
             border-radius: 4px;
-            background: linear-gradient(90deg, #10b981, #059669);
+            background: #4ade80;
             transition: width 0.5s ease;
             position: relative;
         }
 
         .error-message {
             grid-column: 1 / -1;
-            background: #fee2e2;
-            color: #991b1b;
+            background: #4c1d1d;
+            color: #fca5a5;
             padding: 20px;
             border-radius: 12px;
             text-align: center;
             font-weight: 600;
+            border: 1px solid #991b1b;
         }
 
         .setup-instructions {
             grid-column: 1 / -1;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
+            background: #2a2a2a;
+            border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #404040;
         }
 
         .setup-instructions h3 {
-            color: #333;
+            color: #ffffff;
             margin-bottom: 20px;
             font-size: 1.5rem;
         }
@@ -401,6 +395,7 @@
         .setup-instructions ol {
             margin-left: 20px;
             line-height: 1.8;
+            color: #a1a1aa;
         }
 
         .setup-instructions li {
@@ -408,10 +403,11 @@
         }
 
         .setup-instructions code {
-            background: #f3f4f6;
+            background: #404040;
             padding: 2px 6px;
             border-radius: 4px;
             font-family: 'Courier New', monospace;
+            color: #4ade80;
         }
 
         @media (max-width: 768px) {
@@ -445,7 +441,10 @@
 <div class="dashboard" id="dashboard">
     <div class="header">
         <h1 id="scrambleTitle">Octiv Project Roadmap</h1>
-        <p>Live Data - Dont Panic!</p>
+        <p>Live Data - Don't Panic!</p>
+        <button class="refresh-btn" onclick="refreshData()">
+            <span class="refresh-icon">🔄</span> Refresh Data
+        </button>
     </div>
 
     <div class="data-source">
@@ -467,8 +466,8 @@
             <div class="stat-label">Total Tasks</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number" id="completedTasks">0</div>
-            <div class="stat-label">Completed</div>
+            <div class="stat-number" id="deployedTasks">0</div>
+            <div class="stat-label">Deployed</div>
         </div>
         <div class="stat-card">
             <div class="stat-number" id="inProgressTasks">0</div>
@@ -507,6 +506,21 @@
     let projectData = [];
     let statusChart, progressChart;
 
+    // Updated status mappings
+    const statusMap = {
+        planned: 'planned',
+        'in-progress': 'in-progress', 
+        'in progress': 'in-progress',
+        'in-review': 'in-review',
+        'in review': 'in-review',
+        uat: 'uat',
+        'deploy-ready': 'deploy-ready',
+        'deploy ready': 'deploy-ready',
+        deployed: 'deployed',
+        'on-hold': 'on-hold',
+        'on hold': 'on-hold'
+    };
+
     // Load sheet data using environment variables
     async function loadSheetData() {
         try {
@@ -539,12 +553,15 @@
 
             // Transform and validate data
             projectData = parsed.data.map((row, index) => {
+                const rawStatus = (row['Status'] || 'planned').toLowerCase().trim();
+                const mappedStatus = statusMap[rawStatus] || 'planned';
+                
                 return {
                     id: index + 1,
                     name: row['Task Name'] || `Task ${index + 1}`,
                     owner: row['Owner'] || 'Unassigned',
                     priority: (row['Priority'] || 'medium').toLowerCase(),
-                    status: (row['Status'] || 'not-started').toLowerCase().replace(/\s+/g, '-'),
+                    status: mappedStatus,
                     startDate: row['Start Date'] || new Date().toISOString().split('T')[0],
                     endDate: row['End Date'] || new Date().toISOString().split('T')[0],
                     progress: parseInt(row['Progress']) || 0,
@@ -638,20 +655,28 @@
     }
 
     function initializeCharts() {
+        // Chart.js default options for dark theme
+        Chart.defaults.color = '#a1a1aa';
+        Chart.defaults.borderColor = '#404040';
+        Chart.defaults.backgroundColor = '#2a2a2a';
+
         // Status Distribution Pie Chart
         const statusCtx = document.getElementById('statusChart').getContext('2d');
 
         statusChart = new Chart(statusCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Completed', 'In Progress', 'Not Started', 'Blocked'],
+                labels: ['Planned', 'In Progress', 'In Review', 'UAT', 'Deploy Ready', 'Deployed', 'On Hold'],
                 datasets: [{
-                    data: [0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: [
-                        'rgba(16, 185, 129, 0.8)',
-                        'rgba(245, 158, 11, 0.8)',
-                        'rgba(107, 114, 128, 0.8)',
-                        'rgba(239, 68, 68, 0.8)'
+                        'rgba(168, 85, 247, 0.8)',  // Planned - Purple
+                        'rgba(59, 130, 246, 0.8)',  // In Progress - Blue
+                        'rgba(245, 158, 11, 0.8)',  // In Review - Orange
+                        'rgba(139, 92, 246, 0.8)',  // UAT - Violet
+                        'rgba(6, 182, 212, 0.8)',   // Deploy Ready - Cyan
+                        'rgba(16, 185, 129, 0.8)',  // Deployed - Green
+                        'rgba(107, 114, 128, 0.8)'  // On Hold - Gray
                     ],
                     borderWidth: 0,
                     hoverOffset: 10
@@ -669,7 +694,8 @@
                             font: {
                                 size: 14,
                                 weight: '600'
-                            }
+                            },
+                            color: '#ffffff'
                         }
                     }
                 },
@@ -722,13 +748,17 @@
                         ticks: {
                             callback: function(value) {
                                 return value + '%';
-                            }
+                            },
+                            color: '#a1a1aa'
                         },
                         grid: {
-                            color: 'rgba(0,0,0,0.1)'
+                            color: '#404040'
                         }
                     },
                     x: {
+                        ticks: {
+                            color: '#a1a1aa'
+                        },
                         grid: {
                             display: false
                         }
@@ -739,22 +769,25 @@
     }
 
     function getStatusDistribution() {
-        const completed = projectData.filter(task => task.status === 'completed').length;
+        const planned = projectData.filter(task => task.status === 'planned').length;
         const inProgress = projectData.filter(task => task.status === 'in-progress').length;
-        const notStarted = projectData.filter(task => task.status === 'not-started').length;
-        const blocked = projectData.filter(task => task.status === 'blocked').length;
+        const inReview = projectData.filter(task => task.status === 'in-review').length;
+        const uat = projectData.filter(task => task.status === 'uat').length;
+        const deployReady = projectData.filter(task => task.status === 'deploy-ready').length;
+        const deployed = projectData.filter(task => task.status === 'deployed').length;
+        const onHold = projectData.filter(task => task.status === 'on-hold').length;
 
-        return { completed, inProgress, notStarted, blocked };
+        return { planned, inProgress, inReview, uat, deployReady, deployed, onHold };
     }
 
     function updateStats() {
         const total = projectData.length;
-        const completed = projectData.filter(task => task.status === 'completed').length;
+        const deployed = projectData.filter(task => task.status === 'deployed').length;
         const inProgress = projectData.filter(task => task.status === 'in-progress').length;
         const avgProgress = total > 0 ? Math.round(projectData.reduce((sum, task) => sum + task.progress, 0) / total) : 0;
 
         document.getElementById('totalTasks').textContent = total;
-        document.getElementById('completedTasks').textContent = completed;
+        document.getElementById('deployedTasks').textContent = deployed;
         document.getElementById('inProgressTasks').textContent = inProgress;
         document.getElementById('overallProgress').textContent = avgProgress + '%';
     }
@@ -764,7 +797,7 @@
         container.innerHTML = '';
 
         if (projectData.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No tasks found. Please check your Google Sheet data.</p>';
+            container.innerHTML = '<p style="text-align: center; color: #a1a1aa; padding: 40px;">No tasks found. Please check your Google Sheet data.</p>';
             return;
         }
 
@@ -773,12 +806,14 @@
             item.className = `timeline-item ${task.status}`;
 
             const daysRemaining = Math.ceil((new Date(task.endDate) - new Date()) / (1000 * 60 * 60 * 24));
-            const isOverdue = daysRemaining < 0 && task.status !== 'completed';
+            const isOverdue = daysRemaining < 0 && task.status !== 'deployed';
+
+            const statusLabel = task.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
 
             item.innerHTML = `
                     <div class="timeline-header">
                         <div class="task-name">${task.name}</div>
-                        <div class="task-status status-${task.status}">${task.status.replace('-', ' ')}</div>
+                        <div class="task-status status-${task.status}">${statusLabel}</div>
                     </div>
                     <div class="task-details">
                         <div class="detail-item">
@@ -787,17 +822,17 @@
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Priority</div>
-                            <div class="detail-value" style="color: ${task.priority === 'high' ? '#ef4444' : task.priority === 'medium' ? '#f59e0b' : '#10b981'}">${task.priority.toUpperCase()}</div>
+                            <div class="detail-value" style="color: ${task.priority === 'high' ? '#ef4444' : task.priority === 'medium' ? '#f59e0b' : '#4ade80'}">${task.priority.toUpperCase()}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">${isOverdue ? 'Days Overdue' : 'Days Remaining'}</div>
-                            <div class="detail-value" style="color: ${isOverdue ? '#ef4444' : '#10b981'}">${Math.abs(daysRemaining)}</div>
+                            <div class="detail-value" style="color: ${isOverdue ? '#ef4444' : '#4ade80'}">${Math.abs(daysRemaining)}</div>
                         </div>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${task.progress}%"></div>
                     </div>
-                    ${task.description ? `<p style="margin-top: 10px; color: #666; font-size: 0.9rem;">${task.description}</p>` : ''}
+                    ${task.description ? `<p style="margin-top: 10px; color: #a1a1aa; font-size: 0.9rem;">${task.description}</p>` : ''}
                 `;
 
             if (isOverdue) {
@@ -815,7 +850,15 @@
         // Update charts
         const statusData = getStatusDistribution();
         if (statusChart) {
-            statusChart.data.datasets[0].data = [statusData.completed, statusData.inProgress, statusData.notStarted, statusData.blocked];
+            statusChart.data.datasets[0].data = [
+                statusData.planned, 
+                statusData.inProgress, 
+                statusData.inReview, 
+                statusData.uat, 
+                statusData.deployReady, 
+                statusData.deployed, 
+                statusData.onHold
+            ];
             statusChart.update();
         }
 
@@ -845,12 +888,12 @@
             existingError.remove();
         }
     }
+
     function initTitleScramble() {
         var titleElement = document.getElementById('scrambleTitle');
         var originalText = titleElement.textContent;
         var possible = "-+*/|}{[]~\\\":;?/.><=+-_)(*&^%$#@!)}";
-        var colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43'];
-
+        var colors = ['#4ade80', '#22c55e', '#16a34a', '#15803d', '#166534', '#14532d'];
 
         // Break title into individual letter spans
         titleElement.innerHTML = '';
@@ -911,7 +954,6 @@
                 unscrambleLetter(letterObj, 0);
             });
         });
-
     }
 
     // Initialize on page load
