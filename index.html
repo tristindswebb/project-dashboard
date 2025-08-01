@@ -463,7 +463,7 @@
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-number" id="totalTasks">0</div>
-            <div class="stat-label">Total Projects</div>
+            <div class="stat-label">Total Tasks</div>
         </div>
         <div class="stat-card">
             <div class="stat-number" id="deployedTasks">0</div>
@@ -784,7 +784,10 @@
         const total = projectData.length;
         const deployed = projectData.filter(task => task.status === 'deployed').length;
         const inProgress = projectData.filter(task => task.status === 'in-progress').length;
-        const avgProgress = total > 0 ? Math.round(projectData.reduce((sum, task) => sum + task.progress, 0) / total) : 0;
+        
+        // Only calculate progress for tasks that are actively being worked on (exclude planned and deployed)
+        const activeTasks = projectData.filter(task => task.status !== 'planned' && task.status !== 'deployed');
+        const avgProgress = activeTasks.length > 0 ? Math.round(activeTasks.reduce((sum, task) => sum + task.progress, 0) / activeTasks.length) : 0;
 
         document.getElementById('totalTasks').textContent = total;
         document.getElementById('deployedTasks').textContent = deployed;
